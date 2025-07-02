@@ -1,4 +1,4 @@
-/* Reset and Base Styles */
+﻿/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -6,6 +6,9 @@
 }
 
 body {
+    height: 100dvh; /* dynamic viewport height */
+    overflow: hidden;
+    touch-action: manipulation;
     font-family: 'Inter', 'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 70%, #f5576c 100%);
     background-size: 400% 400%;
@@ -30,6 +33,10 @@ body {
 }
 
 .app-container {
+    max-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     max-width: 400px;
     margin: 0 auto;
     min-height: 100vh;
@@ -51,6 +58,9 @@ body {
 
 /* Header */
 .header {
+    padding-bottom: 40px;
+    overflow: visible; /* חשוב */
+    position: relative;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     padding: 30px 20px;
     text-align: center;
@@ -74,6 +84,7 @@ body {
     }
 
 .logo {
+    overflow: hidden;
     position: relative;
     z-index: 2;
 }
@@ -97,11 +108,9 @@ body {
 
 .icon-heart {
     position: absolute;
-    top: -8px;
     right: -8px;
     font-size: 1.4rem;
     animation: heartPulse 2s ease-in-out infinite;
-    z-index: 3;
     filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.8));
 }
 
@@ -259,15 +268,15 @@ body {
     }
 }
 
-/* Main Content */
 .main-content {
-    padding: 25px 20px;
-    height: calc(100vh - 160px);
+    flex: 1;
+    height: auto;
+    overflow: hidden;
+    padding: 10px 10px;
+    justify-content: flex-start;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    background: transparent;
 }
 
 /* Loading State */
@@ -561,9 +570,13 @@ body {
 .action-buttons {
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 30px; /* הפחתנו מ־40 ל־30, תוכל להוריד אפילו ל־20 אם בא לך */
+
+    padding-bottom: max(env(safe-area-inset-bottom), 14px); /* מונע חיתוך למטה */
+    flex-shrink: 0;
     z-index: 15;
     position: relative;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .action-btn {
