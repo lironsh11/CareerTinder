@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Tinder - Find Your Dream Job</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <span class="icon-heart">💝</span>
+                    <span class="icon-briefcase">💼</span>
+                </div>
+                <h1 class="logo-text">
+                    <span class="career-text">Career</span>
+                    <span class="tinder-text">Tinder</span>
+                </h1>
+                <p class="tagline">מצא את העבודה המושלמת בלי מאמץ</p>
+            </div>
+            <div class="stats">
+                <div class="stats-container">
+                    <span class="stats-icon">🎯</span>
+                    <span id="remaining-count">Loading...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Loading State -->
+            <div id="loading" class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading amazing jobs...</p>
+            </div>
+
+            <!-- Job Cards Container -->
+            <div id="cards-container" class="cards-container" style="display: none;">
+                <div id="card-stack" class="card-stack">
+                    <!-- Job cards will be dynamically inserted here -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="skip-btn" class="action-btn skip-btn" disabled>
+                        <span class="btn-icon">❌</span>
+                        <span class="btn-text">Skip</span>
+                    </button>
+                    <button id="save-btn" class="action-btn save-btn" disabled>
+                        <span class="btn-icon">💾</span>
+                        <span class="btn-text">Save</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Matches View -->
+            <div id="matches-view" class="matches-view" style="display: none;">
+                <div class="matches-header">
+                    <h2>✅ Your Matches</h2>
+                    <p>Here are the jobs you saved:</p>
+                </div>
+                <div id="matches-list" class="matches-list">
+                    <!-- Saved jobs will be displayed here -->
+                </div>
+                <div class="matches-actions">
+                    <button id="restart-btn" class="restart-btn">
+                        🔄 Find More Jobs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">😔</div>
+                <h2>No More Jobs</h2>
+                <p>You've seen all available positions. Check back later for new opportunities!</p>
+                <button id="restart-empty-btn" class="restart-btn">
+                    🔄 Start Over
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script src="~/app.js"></script>
+</body>
+</html>

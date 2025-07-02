@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerTinder", "CareerTinder\CareerTinder.csproj", "{18928C98-8971-4CF4-BFE6-253F0643FD51}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18928C98-8971-4CF4-BFE6-253F0643FD51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18928C98-8971-4CF4-BFE6-253F0643FD51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18928C98-8971-4CF4-BFE6-253F0643FD51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18928C98-8971-4CF4-BFE6-253F0643FD51}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8F0DC08-A72F-4DBD-95ED-99C9F7C66DD9}
+	EndGlobalSection
+EndGlobal
