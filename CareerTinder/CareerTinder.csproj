@@ -10,4 +10,8 @@
     <Content Include="Models\Job.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\favicon.ico" />
+  </ItemGroup>
+
 </Project>
