@@ -2,14 +2,16 @@
     constructor() {
         this.jobs = [];
         this.currentJobIndex = 0;
-        this.savedJobs = JSON.parse(localStorage.getItem('savedJobs') || '[]');
+        // Clear old localStorage data to fix undefined issues
+        localStorage.removeItem('savedJobs');
+        this.savedJobs = [];
         this.isAnimating = false;
         this.isDragging = false;
         this.startX = 0;
         this.startY = 0;
         this.currentX = 0;
         this.currentY = 0;
-        
+
         this.init();
     }
 
@@ -25,11 +27,11 @@
             console.log('📡 Loading jobs from API...');
             const response = await fetch('/api/job');
             console.log('📡 Response status:', response.status);
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
+
             this.jobs = await response.json();
             console.log('✅ Loaded jobs:', this.jobs.length, 'jobs');
             console.log('📄 First job:', this.jobs[0]);
@@ -51,7 +53,8 @@
                 location: "San Francisco, CA",
                 salary: "$120,000 - $160,000",
                 tags: ["Remote", "Full-Time", "Senior", "React", "TypeScript"],
-                logoUrl: "https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=80&h=80&fit=crop&crop=center"
+                logoText: "TC",
+                logoColor: "#4F46E5"
             },
             {
                 id: 2,
@@ -61,7 +64,8 @@
                 location: "New York, NY",
                 salary: "$100,000 - $140,000",
                 tags: ["Hybrid", "Full-Time", "Mid-Level", "Node.js", "Python", "AWS"],
-                logoUrl: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=80&h=80&fit=crop&crop=center"
+                logoText: "SX",
+                logoColor: "#059669"
             },
             {
                 id: 3,
@@ -71,7 +75,8 @@
                 location: "Austin, TX",
                 salary: "$110,000 - $150,000",
                 tags: ["Remote", "Full-Time", "DevOps", "Kubernetes", "Docker", "CI/CD"],
-                logoUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=80&h=80&fit=crop&crop=center"
+                logoText: "CT",
+                logoColor: "#DC2626"
             },
             {
                 id: 4,
@@ -81,7 +86,8 @@
                 location: "Los Angeles, CA",
                 salary: "$90,000 - $120,000",
                 tags: ["Remote", "Full-Time", "Design", "Figma", "Prototyping"],
-                logoUrl: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=80&h=80&fit=crop&crop=center"
+                logoText: "DS",
+                logoColor: "#7C3AED"
             },
             {
                 id: 5,
@@ -91,7 +97,8 @@
                 location: "Seattle, WA",
                 salary: "$130,000 - $170,000",
                 tags: ["Hybrid", "Full-Time", "Data Science", "Python", "ML", "Senior"],
-                logoUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=80&h=80&fit=crop&crop=center"
+                logoText: "AI",
+                logoColor: "#EA580C"
             }
         ];
     }
@@ -106,7 +113,7 @@
         // Keyboard listeners
         document.addEventListener('keydown', (e) => {
             if (this.isAnimating) return;
-            
+
             if (e.key === 'ArrowLeft' || e.key === 'x' || e.key === 'X') {
                 this.skipJob();
             } else if (e.key === 'ArrowRight' || e.key === 's' || e.key === 'S') {
@@ -118,7 +125,7 @@
     showCards() {
         console.log('🎴 Showing cards, jobs count:', this.jobs.length);
         document.getElementById('loading').style.display = 'none';
-        
+
         if (this.jobs.length === 0) {
             console.log('❌ No jobs found, showing empty state');
             this.showEmptyState();
@@ -135,7 +142,7 @@
     renderCards() {
         console.log('🎨 Rendering cards, current index:', this.currentJobIndex);
         const cardStack = document.getElementById('card-stack');
-        
+
         // Clean up any existing event listeners before clearing
         const existingCards = cardStack.querySelectorAll('.job-card');
         existingCards.forEach(card => {
@@ -143,7 +150,7 @@
                 card._cleanup();
             }
         });
-        
+
         cardStack.innerHTML = '';
 
         // Render up to 3 cards for stacking effect
@@ -156,7 +163,7 @@
             const card = this.createJobCard(job, i === 0);
             cardStack.appendChild(card);
         }
-        
+
         console.log('✅ Cards rendered successfully');
     }
 
@@ -167,7 +174,9 @@
 
         card.innerHTML = `
             <div class="card-header">
-                <img src="${job.logoUrl}" alt="${job.company}" class="company-logo">
+                <div class="company-logo" style="background: linear-gradient(135deg, ${job.logoColor}, ${job.logoColor}DD); color: white; font-weight: 800; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                    ${job.logoText || job.company.substring(0, 2).toUpperCase()}
+                </div>
                 <div class="job-info">
                     <h3>${job.title}</h3>
                     <div class="company">${job.company}</div>
@@ -205,7 +214,7 @@
         if (isTopCard) {
             return this.addCardInteraction(card);
         }
-        
+
         return card;
     }
 
@@ -214,7 +223,7 @@
         const handleMouseDown = (e) => this.startDrag(e, card);
         const handleMouseMove = (e) => this.drag(e, card);
         const handleMouseUp = (e) => this.endDrag(e, card);
-        
+
         card.addEventListener('mousedown', handleMouseDown);
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
@@ -223,11 +232,11 @@
         const handleTouchStart = (e) => this.startDrag(e, card);
         const handleTouchMove = (e) => this.drag(e, card);
         const handleTouchEnd = (e) => this.endDrag(e, card);
-        
+
         card.addEventListener('touchstart', handleTouchStart, { passive: false });
         card.addEventListener('touchmove', handleTouchMove, { passive: false });
         card.addEventListener('touchend', handleTouchEnd, { passive: false });
-        
+
         // Store cleanup function for later removal
         card._cleanup = () => {
             card.removeEventListener('mousedown', handleMouseDown);
@@ -237,67 +246,67 @@
             card.removeEventListener('touchmove', handleTouchMove);
             card.removeEventListener('touchend', handleTouchEnd);
         };
-        
+
         console.log('✅ Added interaction to card:', card.dataset.jobId);
         return card;
     }
 
     startDrag(e, card) {
         if (this.isAnimating) return;
-        
+
         this.isDragging = true;
         card.classList.add('dragging');
-        
+
         const clientX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
         const clientY = e.type === 'mousedown' ? e.clientY : e.touches[0].clientY;
-        
+
         this.startX = clientX;
         this.startY = clientY;
         this.currentX = clientX;
         this.currentY = clientY;
-        
+
         // Prevent default to stop scrolling on mobile
         e.preventDefault();
     }
 
     drag(e, card) {
         if (!this.isDragging || this.isAnimating) return;
-        
+
         // Make sure we're only dragging the top card
         const topCard = document.querySelector('.job-card:first-child');
         if (card !== topCard) return;
-        
+
         e.preventDefault();
-        
+
         const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
         const clientY = e.type === 'mousemove' ? e.clientY : e.touches[0].clientY;
-        
+
         this.currentX = clientX;
         this.currentY = clientY;
-        
+
         const deltaX = this.currentX - this.startX;
         const deltaY = this.currentY - this.startY;
-        
+
         // Enhanced rotation calculation for more natural feel
         const rotation = deltaX * 0.15;
         const scale = Math.max(0.95, 1 - Math.abs(deltaX) * 0.0005);
-        
+
         // Apply transform with improved physics
         card.style.transform = `translate(${deltaX}px, ${deltaY * 0.5}px) rotate(${rotation}deg) scale(${scale})`;
-        
+
         // Enhanced swipe indicators with smooth transitions
         const likeIndicator = card.querySelector('.swipe-indicator.like');
         const passIndicator = card.querySelector('.swipe-indicator.pass');
-        
+
         const threshold = 80;
         const opacity = Math.min(0.9, Math.abs(deltaX) / threshold);
-        
+
         if (deltaX > 30) {
             likeIndicator.style.opacity = opacity;
             likeIndicator.classList.add('show');
             passIndicator.style.opacity = 0;
             passIndicator.classList.remove('show');
-            
+
             // Add visual feedback to card
             card.style.boxShadow = `0 20px 40px rgba(5, 150, 105, ${opacity * 0.3})`;
             card.style.borderColor = `rgba(5, 150, 105, ${opacity * 0.5})`;
@@ -306,7 +315,7 @@
             passIndicator.classList.add('show');
             likeIndicator.style.opacity = 0;
             likeIndicator.classList.remove('show');
-            
+
             // Add visual feedback to card
             card.style.boxShadow = `0 20px 40px rgba(220, 38, 38, ${opacity * 0.3})`;
             card.style.borderColor = `rgba(220, 38, 38, ${opacity * 0.5})`;
@@ -315,7 +324,7 @@
             passIndicator.style.opacity = 0;
             likeIndicator.classList.remove('show');
             passIndicator.classList.remove('show');
-            
+
             // Reset card appearance
             card.style.boxShadow = '';
             card.style.borderColor = '';
@@ -324,15 +333,15 @@
 
     endDrag(e, card) {
         if (!this.isDragging) return;
-        
+
         this.isDragging = false;
         card.classList.remove('dragging');
-        
+
         const deltaX = this.currentX - this.startX;
         const deltaY = this.currentY - this.startY;
         const threshold = 120;
         const velocity = Math.abs(deltaX) / 10; // Simple velocity calculation
-        
+
         // Hide indicators with smooth transition
         const likeIndicator = card.querySelector('.swipe-indicator.like');
         const passIndicator = card.querySelector('.swipe-indicator.pass');
@@ -340,11 +349,11 @@
         passIndicator.style.opacity = 0;
         likeIndicator.classList.remove('show');
         passIndicator.classList.remove('show');
-        
+
         // Reset card styling
         card.style.boxShadow = '';
         card.style.borderColor = '';
-        
+
         if (Math.abs(deltaX) > threshold || velocity > 5) {
             // Swipe action with enhanced animation
             if (deltaX > 0) {
@@ -358,7 +367,7 @@
             // Smooth snap back animation
             card.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
             card.style.transform = '';
-            
+
             setTimeout(() => {
                 card.style.transition = '';
             }, 400);
@@ -367,7 +376,7 @@
 
     performSkip() {
         if (this.isAnimating || this.currentJobIndex >= this.jobs.length) return;
-        
+
         console.log('⏭️ Performing skip for job:', this.currentJobIndex);
         const topCard = document.querySelector('.job-card:first-child');
         if (topCard) {
@@ -379,7 +388,7 @@
 
     performSave() {
         if (this.isAnimating || this.currentJobIndex >= this.jobs.length) return;
-        
+
         console.log('💾 Performing save for job:', this.currentJobIndex);
         const currentJob = this.jobs[this.currentJobIndex];
         if (currentJob && !this.savedJobs.find(job => job.id === currentJob.id)) {
@@ -387,7 +396,7 @@
             localStorage.setItem('savedJobs', JSON.stringify(this.savedJobs));
             this.showSuccessFeedback();
         }
-        
+
         const topCard = document.querySelector('.job-card:first-child');
         if (topCard) {
             this.animateSwipe(topCard, 'right', () => {
@@ -399,20 +408,20 @@
     animateSwipe(card, direction, callback) {
         this.isAnimating = true;
         this.disableButtons();
-        
+
         console.log(`🎬 Starting ${direction} swipe animation`);
-        
+
         // Enhanced swipe animation
         const exitX = direction === 'right' ? window.innerWidth : -window.innerWidth;
         const rotation = direction === 'right' ? 30 : -30;
-        
+
         card.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         card.style.transform = `translateX(${exitX}px) rotate(${rotation}deg) scale(0.8)`;
         card.style.opacity = '0';
-        
+
         // Add class for additional styling
         card.classList.add(`swiped-${direction}`);
-        
+
         setTimeout(() => {
             console.log('🎬 Animation complete, executing callback');
             this.isAnimating = false;
@@ -422,14 +431,14 @@
 
     skipJob() {
         if (this.isAnimating || this.currentJobIndex >= this.jobs.length) return;
-        
+
         console.log('⏭️ Button skip job:', this.currentJobIndex);
         this.performSkip();
     }
 
     saveJob() {
         if (this.isAnimating || this.currentJobIndex >= this.jobs.length) return;
-        
+
         console.log('💾 Button save job:', this.currentJobIndex);
         this.performSave();
     }
@@ -453,9 +462,9 @@
             box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
             animation: feedbackPop 0.6s ease-out;
         `;
-        
+
         document.body.appendChild(feedback);
-        
+
         setTimeout(() => {
             feedback.remove();
         }, 600);
@@ -464,7 +473,7 @@
     nextJob() {
         this.currentJobIndex++;
         console.log('📈 Moving to next job, index:', this.currentJobIndex);
-        
+
         if (this.currentJobIndex >= this.jobs.length) {
             console.log('🏁 No more jobs, showing matches');
             this.showMatches();
@@ -482,13 +491,13 @@
     showMatches() {
         document.getElementById('cards-container').style.display = 'none';
         document.getElementById('matches-view').style.display = 'block';
-        
+
         this.renderMatches();
     }
 
     renderMatches() {
         const matchesList = document.getElementById('matches-list');
-        
+
         if (this.savedJobs.length === 0) {
             matchesList.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #64748b;">
@@ -501,7 +510,9 @@
             matchesList.innerHTML = this.savedJobs.map(job => `
                 <div class="match-card">
                     <div class="match-header">
-                        <img src="${job.logoUrl}" alt="${job.company}" class="match-logo">
+                        <div class="match-logo" style="background: linear-gradient(135deg, ${job.logoColor || '#4F46E5'}, ${job.logoColor || '#4F46E5'}DD); color: white; font-weight: 800; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                            ${job.logoText || job.company.substring(0, 2).toUpperCase()}
+                        </div>
                         <div class="match-info">
                             <h4>${job.title}</h4>
                             <div class="company">${job.company}</div>
@@ -562,7 +573,7 @@
     enableButtons() {
         const skipBtn = document.getElementById('skip-btn');
         const saveBtn = document.getElementById('save-btn');
-        
+
         if (skipBtn && saveBtn) {
             skipBtn.disabled = false;
             saveBtn.disabled = false;
@@ -573,7 +584,7 @@
     disableButtons() {
         const skipBtn = document.getElementById('skip-btn');
         const saveBtn = document.getElementById('save-btn');
-        
+
         if (skipBtn && saveBtn) {
             skipBtn.disabled = true;
             saveBtn.disabled = true;
@@ -585,12 +596,12 @@
         this.currentJobIndex = 0;
         this.isAnimating = false;
         this.isDragging = false;
-        
+
         // Hide all views
         document.getElementById('matches-view').style.display = 'none';
         document.getElementById('empty-state').style.display = 'none';
         document.getElementById('loading').style.display = 'block';
-        
+
         // Reload and show cards
         setTimeout(() => {
             this.showCards();
@@ -601,26 +612,26 @@
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🌟 DOM Content Loaded - Starting CareerTinder');
-    
+
     // Check if all required elements exist
     const requiredElements = [
         'loading',
-        'cards-container', 
+        'cards-container',
         'card-stack',
         'skip-btn',
         'save-btn',
         'remaining-count'
     ];
-    
+
     const missingElements = requiredElements.filter(id => !document.getElementById(id));
-    
+
     if (missingElements.length > 0) {
         console.error('❌ Missing DOM elements:', missingElements);
         return;
     }
-    
+
     console.log('✅ All required DOM elements found');
-    
+
     // Initialize the app
     try {
         window.careerTinder = new CareerTinder();
@@ -654,7 +665,7 @@ window.addEventListener('beforeunload', (e) => {
 // Debug helper
 window.addEventListener('load', () => {
     console.log('🔧 Window loaded, CareerTinder instance:', window.careerTinder);
-    
+
     // Add debug info to console
     if (window.careerTinder) {
         console.log('📊 Debug Info:');
